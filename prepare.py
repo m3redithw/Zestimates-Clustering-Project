@@ -41,6 +41,9 @@ def prep_zillow(df):
     col = ['parcelid','assessmentyear','yearbuilt','fips','propertycountylandusecode', 'propertylandusetypeid', 'rawcensustractandblock', 'regionidcounty', 'censustractandblock', 'propertylandusedesc']
     df.drop(columns = col, inplace = True)
     
+    # Drop incorrect zips
+    df = df['zips']<=99999
+    
     # Change data types
     df['city'] = df['city'].astype(int)
     df['zips'] = df['zips'].astype(int)
