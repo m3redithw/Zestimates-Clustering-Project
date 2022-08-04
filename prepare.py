@@ -26,28 +26,67 @@ def prep_zillow(df):
     
     # Rename columns
     df.rename(columns = {'bathroomcnt':'bathrooms', 'bedroomcnt':'bedrooms',
-                              'calculatedfinishedsquarefeet':'total_sqft', 'finishedsquarefeet12': 'living_sqft', 'fullbathcnt':'full_bath', 'lotsizesquarefeet':'lot_sqft', 'regionidzip':'zipcode', 'structuretaxvaluedollarcnt': 'structure_value', 'taxvaluedollarcnt':'assessed_value', 'landtaxvaluedollarcnt':'land_value'}, inplace = True)
+                              'calculatedfinishedsquarefeet':'total_sqft', 'finishedsquarefeet12': 'living_sqft', 'fullbathcnt':'full_bath', 'lotsizesquarefeet':'lot_sqft', 'structuretaxvaluedollarcnt': 'structure_value', 'taxvaluedollarcnt':'assessed_value', 'landtaxvaluedollarcnt':'land_value'}, inplace = True)
     
     # Impute   `yearbuilt` to `age`
     df['age'] = 2017 - df['yearbuilt']
-    
+
+    # Impute tax amount to tax rate
+    df['taxrate'] = df.taxamount/df.assessed_value*100
+
     # Data mapping using fips code
     df['county'] = df.fips.map({6037: 'Los Angeles', 6059: 'Orange', 6111: 'Ventura'})
+
+    # Create column for transaction month
+    df['transaction_month'] = df['transactiondate'].str.slice(5, 7)
+
+    # Create dummy variables for county and add dummies to original dataframe
+    dummy_df = pd.get_dummies(df[['county']], dummy_na=False, drop_first=False)
+    df = pd.concat([df, dummy_df], axis=1)
+
+    
+
     # Impute latitude & longitude
     df.latitude = df.latitude/1000000
     df.longitude = df.longitude/1000000
 
+    df = df[df['regionidzip']< 1000000]
     # Drop unuseful columns
-    col = ['regionidcity','parcelid','assessmentyear','yearbuilt','fips','propertycountylandusecode', 'propertylandusetypeid', 'rawcensustractandblock', 'regionidcounty', 'censustractandblock', 'propertylandusedesc']
+    col = ['transactiondate','regionidcity','regionidzip','calculatedbathnbr','assessmentyear','yearbuilt','fips','propertycountylandusecode', 'propertylandusetypeid', 'rawcensustractandblock', 'regionidcounty', 'censustractandblock', 'propertylandusedesc']
     df.drop(columns = col, inplace = True)
     
-    # Drop rows that have incorrect zipcode
-    df = df[df['zipcode']<=99999]
+    # Join table to get correct zipcode
+    geo = pd.read_csv('address.csv')
+    df = pd.merge(df, geo, on='parcelid', how='inner')    
 
     # Change data types
-    df['zipcode'] = df['zipcode'].astype(int)
     df['age'] = df['age'].astype(int)
+    df['zip_code'] = df['zip_code'].astype(int)
+    df['transaction_month']=df['transaction_month'].astype(int)
 
+    # Handle Outliers:
+    # The general rule for outliers are:
+    ## Upper bond: Q3 + 1.5*IQR
+    ## Lower bund: Q1 - 1.5*IQR
+    # Bonds are manually adjusted for each feature
+    
+
+    df = df[df.bedrooms <= 7]
+    df = df[df.bedrooms >= 1]
+
+    df = df[df.bathrooms <= 7]
+    df = df[df.bathrooms >= 0.5]
+
+    df = df[df.total_sqft <= 7500]
+    df = df[df.total_sqft >= 500]
+
+    df = df[df.lot_sqft <= 50000]
+    df = df[df.lot_sqft >= 900]
+
+    df = df[df.assessed_value <= 1200000]
+    df = df[df.assessed_value >= 45500]
+
+    df = df[df.taxrate < 10]
     return df
 
 def split(df):
