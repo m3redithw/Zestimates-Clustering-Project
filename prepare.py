@@ -26,7 +26,7 @@ def prep_zillow(df):
     
     # Rename columns
     df.rename(columns = {'bathroomcnt':'bathrooms', 'bedroomcnt':'bedrooms',
-                              'calculatedfinishedsquarefeet':'total_sqft', 'finishedsquarefeet12': 'living_sqft', 'fullbathcnt':'full_bath', 'lotsizesquarefeet':'lot_sqft', 'regionidcity':'city', 'regionidzip':'zips', 'structuretaxvaluedollarcnt': 'structure_value', 'taxvaluedollarcnt':'assessed_value', 'landtaxvaluedollarcnt':'land_value'}, inplace = True)
+                              'calculatedfinishedsquarefeet':'total_sqft', 'finishedsquarefeet12': 'living_sqft', 'fullbathcnt':'full_bath', 'lotsizesquarefeet':'lot_sqft', 'regionidzip':'zipcode', 'structuretaxvaluedollarcnt': 'structure_value', 'taxvaluedollarcnt':'assessed_value', 'landtaxvaluedollarcnt':'land_value'}, inplace = True)
     
     # Impute   `yearbuilt` to `age`
     df['age'] = 2017 - df['yearbuilt']
@@ -38,15 +38,14 @@ def prep_zillow(df):
     df.longitude = df.longitude/1000000
 
     # Drop unuseful columns
-    col = ['parcelid','assessmentyear','yearbuilt','fips','propertycountylandusecode', 'propertylandusetypeid', 'rawcensustractandblock', 'regionidcounty', 'censustractandblock', 'propertylandusedesc']
+    col = ['regionidcity','parcelid','assessmentyear','yearbuilt','fips','propertycountylandusecode', 'propertylandusetypeid', 'rawcensustractandblock', 'regionidcounty', 'censustractandblock', 'propertylandusedesc']
     df.drop(columns = col, inplace = True)
     
-    # Drop incorrect zips
-    df = df['zips']<=99999
-    
+    # Drop rows that have incorrect zipcode
+    df = df[df['zipcode']<=99999]
+
     # Change data types
-    df['city'] = df['city'].astype(int)
-    df['zips'] = df['zips'].astype(int)
+    df['zipcode'] = df['zipcode'].astype(int)
     df['age'] = df['age'].astype(int)
 
     return df
