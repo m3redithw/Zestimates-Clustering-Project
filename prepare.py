@@ -5,6 +5,7 @@ import numpy as np
 # import splitting and imputing functions
 from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import MinMaxScaler
 
 # import data acquisition
 import acquire
@@ -50,14 +51,16 @@ def prep_zillow(df):
     df.latitude = df.latitude/1000000
     df.longitude = df.longitude/1000000
 
-    df = df[df['regionidzip']< 1000000]
     # Drop unuseful columns
     col = ['transactiondate','regionidcity','regionidzip','calculatedbathnbr','assessmentyear','yearbuilt','fips','propertycountylandusecode', 'propertylandusetypeid', 'rawcensustractandblock', 'regionidcounty', 'censustractandblock', 'propertylandusedesc']
     df.drop(columns = col, inplace = True)
     
     # Join table to get correct zipcode
     geo = pd.read_csv('address.csv')
-    df = pd.merge(df, geo, on='parcelid', how='inner')    
+    df = pd.merge(df, geo, on='parcelid', how='inner')
+
+    # Drop new nulls from zipcode
+    df = df.dropna()    
 
     # Change data types
     df['age'] = df['age'].astype(int)
@@ -70,7 +73,8 @@ def prep_zillow(df):
     ## Lower bund: Q1 - 1.5*IQR
     # Bonds are manually adjusted for each feature
     
-
+    df = df[df.zip_code >= 90000]
+    df = df[df.zip_code < 100000]
     df = df[df.bedrooms <= 7]
     df = df[df.bedrooms >= 1]
 
@@ -87,6 +91,14 @@ def prep_zillow(df):
     df = df[df.assessed_value >= 45500]
 
     df = df[df.taxrate < 10]
+
+    # Join zip groups by logerror
+    zip_error = pd.read_csv('logeror_zip.csv')
+    df = pd.merge(df, zip_error, on='zip_code', how='left')
+    df['zip_bin'] = df.zip_group.map({1: 'sgfnt high', 2: 'sgfnt low', 3: 'insgfnt high', 4: 'insgfnt low'})
+    zipdummy = pd.get_dummies(df[['zip_bin']], dummy_na=False, drop_first=False)
+    df = pd.concat([df, zipdummy], axis=1)
+    df.drop(columns = 'zip_group', inplace = True)
     return df
 
 def split(df):
@@ -102,4 +114,30 @@ def split(df):
     train, test = train_test_split(df, test_size = .2, random_state=123)   
     train, validate = train_test_split(train, test_size=.3, random_state=123)
     
+    return train, validate, test
+
+def split_scale(df):
+    # Copy a new dataframe to perform feature engineering
+    scaled_df = df.copy()
+
+    # Initiate MinMaxScaler
+    scaler = MinMaxScaler()
+
+    # Split the scaled data into train, validate, test
+    train, validate, test = split(scaled_df)
+
+    # Columns to scale
+    cols = ['bathrooms', 'bedrooms', 'total_sqft', 'living_sqft', 'full_bath',
+       'latitude', 'longitude', 'lot_sqft', 'roomcnt',
+       'structure_value', 'assessed_value', 'land_value', 'taxamount', 'age']
+
+    # Fit numerical features to scaler
+    scaler.fit(train[cols])
+
+    # Set the features to transformed value
+    train[cols] = scaler.transform(train[cols])
+    validate[cols] = scaler.transform(validate[cols])
+    test[cols] = scaler.transform(test[cols])
+
+
     return train, validate, test
