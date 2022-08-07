@@ -1,4 +1,4 @@
-# Zestimates by Meredith Wang
+# How Accurate Is Your Zestimates by Meredith Wang
 <a href="#"><img alt="Python" src="https://img.shields.io/badge/Python-013243.svg?logo=python&logoColor=white"></a>
 <a href="#"><img alt="Pandas" src="https://img.shields.io/badge/Pandas-150458.svg?logo=pandas&logoColor=white"></a>
 <a href="#"><img alt="NumPy" src="https://img.shields.io/badge/Numpy-2a4d69.svg?logo=numpy&logoColor=white"></a>
@@ -14,9 +14,12 @@
 
 
 
-The current property buying or selling is hectic and expensive. Efficiently predicting the property pricing for real estate customers with respect to their budgets and priorities is essential.
+**Zillow's ZestimateⓇ** is an estimate of value using a proprietary formula created by the online real estate database company. Zestimates cover more than 100 million homes across the United States. A Zestimate is calculated from physical attributes, tax records, and user submitted data.
 
-In this project, we will use statistical analysis to analyze the key drivers of perperty value for single family properties, develop a ML regression model to predict property tax assessed value, and provide recommendations on making better homes' values prediction.
+In this project, we will use statistical analysis to analyze the key drivers of logerror, which is defined as logerror (the differnece between the predicted log error and the actual log error). We will incorporate clustering methodologies, and develop a ML regression model to predict the logerror, and provide recommendations on making more accurate prediction on logerror which further leads to better prediction on home value predictions.
+```
+logerror = log(Zestimate) − log(SalePrice)
+```
 ## :house:   Project Goals
 ▪️ Find the key drivers of property value for **single family properties** in 2017.
 
