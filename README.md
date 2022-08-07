@@ -312,6 +312,22 @@ Unuseful columns are dropped
      ```
 </details>
 
+<details>
+<summary> Data Scaling</summary>
+
+- Scaling numerical features using `MinMaxScaler()`
+
+- Create a function that removes columns and rows that have more than a certian percentage of missing values
+
+	```sh
+	    def handle_missing_values(df, prop_required_columns, prop_required_row):
+		    threshold = int(round(prop_required_columns * len(df.index), 0))
+		    df = df.dropna(axis=1, thresh=threshold) #1, or ‘columns’ : Drop columns which contain missing values
+		    threshold = int(round(prop_required_row * len(df.columns), 0))
+		    df = df.dropna(axis=0, thresh=threshold) #0, or ‘index’ : Drop rows which contain missing values
+		    return df
+	``` 
+</details>
 #### :three:   Exploratory Analysis
 - Ask questions to find what are the key features that are associated with property assessed value
 
