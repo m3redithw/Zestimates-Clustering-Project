@@ -194,26 +194,27 @@ Null values are dropped for entire dataset
 	 ```
 	 
 	 - Extract month from `transaction_date`
-	  ```sh
+	 ```sh
 	 df['transaction_month'] = df['transactiondate'].str.slice(5, 7)
 	 ```
-	 
+	
 	 - Convert `latitude` and `longitude` to correct digit
 	 ```sh
 	 df.latitude = df.latitude/1000000
  	 df.longitude = df.longitude/1000000
 	 ```
+	
 - **Join Tables**
 	- Join table **address.csv** which has the correct zip code for properties (derived from geo engineering)
 	```sh
 	geo = pd.read_csv('address.csv')
-    	df = pd.merge(df, geo, on='parcelid', how='inner')
+	df = pd.merge(df, geo, on='parcelid', how='inner')
 	```
 	
 	- Join table **logerror_zip.csv** which utilized T-test to decide the significancy of logerrors corresponding to each zip code
 	```sh
 	zip_error = pd.read_csv('logeror_zip.csv')
-   	df = pd.merge(df, zip_error, on='zip_code', how='left')
+	df = pd.merge(df, zip_error, on='zip_code', how='left')
 	```
 	
 - **Data Mapping**
@@ -317,17 +318,36 @@ Unuseful columns are dropped
 
 - Scaling numerical features using `MinMaxScaler()`
 
-- Create a function that removes columns and rows that have more than a certian percentage of missing values
+- Create a function that copies the original dataframe, split the data into train, validate, and test, then scale the data of each dataset
 
 	```sh
-	    def handle_missing_values(df, prop_required_columns, prop_required_row):
-		    threshold = int(round(prop_required_columns * len(df.index), 0))
-		    df = df.dropna(axis=1, thresh=threshold) #1, or ‘columns’ : Drop columns which contain missing values
-		    threshold = int(round(prop_required_row * len(df.columns), 0))
-		    df = df.dropna(axis=0, thresh=threshold) #0, or ‘index’ : Drop rows which contain missing values
-		    return df
+	def split_scale(df):
+		# Copy a new dataframe to perform feature engineering
+		scaled_df = df.copy()
+
+		# Initiate MinMaxScaler
+		scaler = MinMaxScaler()
+
+		# Split the scaled data into train, validate, test
+		train, validate, test = split(scaled_df)
+
+		# Columns to scale
+		cols = ['bathrooms', 'bedrooms', 'total_sqft', 'living_sqft', 'full_bath',
+		'latitude', 'longitude', 'lot_sqft', 'roomcnt',
+		'structure_value', 'assessed_value', 'land_value', 'taxamount', 'age']
+
+		# Fit numerical features to scaler
+		scaler.fit(train[cols])
+
+		# Set the features to transformed value
+		train[cols] = scaler.transform(train[cols])
+		validate[cols] = scaler.transform(validate[cols])
+		test[cols] = scaler.transform(test[cols])
+	
+    	return train, validate, test
 	``` 
 </details>
+	
 #### :three:   Exploratory Analysis
 - Ask questions to find what are the key features that are associated with property assessed value
 
