@@ -1,4 +1,6 @@
-# How Accurate Is Your Zestimates by Meredith Wang
+# How Accurate Is Your Zestimates
+by **Meredith Wang**
+
 <a href="#"><img alt="Python" src="https://img.shields.io/badge/Python-013243.svg?logo=python&logoColor=white"></a>
 <a href="#"><img alt="Pandas" src="https://img.shields.io/badge/Pandas-150458.svg?logo=pandas&logoColor=white"></a>
 <a href="#"><img alt="NumPy" src="https://img.shields.io/badge/Numpy-2a4d69.svg?logo=numpy&logoColor=white"></a>
@@ -16,27 +18,32 @@
 
 **Zillow's ZestimateⓇ** is an estimate of value using a proprietary formula created by the online real estate database company. Zestimates cover more than 100 million homes across the United States. A Zestimate is calculated from physical attributes, tax records, and user submitted data.
 
-In this project, we will use statistical analysis to analyze the key drivers of logerror, which is defined as logerror (the differnece between the predicted log error and the actual log error). We will incorporate clustering methodologies, and develop a ML regression model to predict the logerror, and provide recommendations on making more accurate prediction on logerror which further leads to better prediction on home value predictions.
+In this project, we will use statistical analysis to analyze the key drivers of logerror, which is defined as logerror (the differnece between the predicted log error and the actual log error). We will incorporate clustering methodologies, and develop a ML regression model to predict the log error, and provide recommendations on making more accurate prediction on log error which further leads to better prediction on home value predictions.
 ```
 logerror = log(Zestimate) − log(SalePrice)
 ```
 ## :house:   Project Goals
-▪️ Find the key drivers of property value for **single family properties** in 2017.
+▪️ Find the key drivers of log error for **single family properties** in 2017.
 
-▪️ Construct an ML Regression model that predict **propery tax assessed values** ('assessed_value') of Single Family Properties using attributes of the properties.
+▪️ Use clustering methodologies to explore and understand the relationship between features better.
+
+▪️ Construct an ML Regression model that predict **log error** ('logerror') of Single Family Properties using attributes of the properties and the useful labels we discovered from clustering.
 
 ▪️ Deliver a report that the data science team can read through and replicate, understand what steps were taken, why and what the outcome was.
 
-▪️ Make recommendations on what works or doesn't work in prediction these homes' values.
+▪️ Make recommendations on what works or doesn't work in prediction log error.
 
 ## :memo:   Initial Questions
-▪️ What associated with `assessed_value` the most?
+▪️ Is any of the location features associated with `logerror`? Is `logerror` significantly different across different counties? What about latitude, longtitude? What about zip code?
 
-▪️ Is having pool positively associated with `assessed value`?
+▪️ Is the `age ` of the house correlated with `logerror`?
 
-▪️ Is number of bedrooms and bathrooms associated with `assessed value`?
+▪️ Is any of the area (in square feet) features, including `total_sqft`, `lot_sqft`, `living_sqft`, of the property associated with `logerror`?
 
-▪️ Is `assessed_value` significantly different across 3 different counties?
+▪️ Is any of the size features, including `bedrroms`, `bathrooms`, `full_bath`, `roomcnt`, of the property associated with `logerror`?
+
+▪️ Is `transaction_month` correlated with `logerror`?
+
 ## :open_file_folder:   Data Dictionary
 **Variable** |    **Value**    | **Meaning**
 ---|---|---
