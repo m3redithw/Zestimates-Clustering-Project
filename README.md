@@ -1,4 +1,6 @@
-# Zestimates by Meredith Wang
+# How Accurate Is Your Zestimates
+by **Meredith Wang**
+
 <a href="#"><img alt="Python" src="https://img.shields.io/badge/Python-013243.svg?logo=python&logoColor=white"></a>
 <a href="#"><img alt="Pandas" src="https://img.shields.io/badge/Pandas-150458.svg?logo=pandas&logoColor=white"></a>
 <a href="#"><img alt="NumPy" src="https://img.shields.io/badge/Numpy-2a4d69.svg?logo=numpy&logoColor=white"></a>
@@ -14,39 +16,55 @@
 
 
 
-The current property buying or selling is hectic and expensive. Efficiently predicting the property pricing for real estate customers with respect to their budgets and priorities is essential.
+**Zillow's ZestimateⓇ** is an estimate of value using a proprietary formula created by the online real estate database company. Zestimates cover more than 100 million homes across the United States. A Zestimate is calculated from physical attributes, tax records, and user submitted data.
 
-In this project, we will use statistical analysis to analyze the key drivers of perperty value for single family properties, develop a ML regression model to predict property tax assessed value, and provide recommendations on making better homes' values prediction.
+In this project, we will use statistical analysis to analyze the key drivers of logerror, which is defined as logerror (the differnece between the predicted log error and the actual log error). We will incorporate clustering methodologies, and develop a ML regression model to predict the log error, and provide recommendations on making more accurate prediction on log error which further leads to better prediction on home value predictions.
+```
+logerror = log(Zestimate) − log(SalePrice)
+```
 ## :house:   Project Goals
-▪️ Find the key drivers of property value for **single family properties** in 2017.
+▪️ Find the key drivers of log error for **single family properties** in 2017.
 
-▪️ Construct an ML Regression model that predict **propery tax assessed values** ('assessed_value') of Single Family Properties using attributes of the properties.
+▪️ Use clustering methodologies to explore and understand the relationship between features better.
+
+▪️ Construct an ML Regression model that predict **log error** ('logerror') of Single Family Properties using attributes of the properties and the useful labels we discovered from clustering.
 
 ▪️ Deliver a report that the data science team can read through and replicate, understand what steps were taken, why and what the outcome was.
 
-▪️ Make recommendations on what works or doesn't work in prediction these homes' values.
+▪️ Make recommendations on what works or doesn't work in prediction log error.
 
 ## :memo:   Initial Questions
-▪️ What associated with `assessed_value` the most?
+▪️ Is any of the location features associated with `logerror`? Is `logerror` significantly different across different counties? What about latitude, longtitude? What about zip code?
 
-▪️ Is having pool positively associated with `assessed value`?
+▪️ Is the `age ` of the house correlated with `logerror`?
 
-▪️ Is number of bedrooms and bathrooms associated with `assessed value`?
+▪️ Is any of the area (in square feet) features, including `total_sqft`, `lot_sqft`, `living_sqft`, of the property associated with `logerror`?
 
-▪️ Is `assessed_value` significantly different across 3 different counties?
+▪️ Is any of the size features, including `bedrroms`, `bathrooms`, `full_bath`, `roomcnt`, of the property associated with `logerror`?
+
+▪️ Is `transaction_month` correlated with `logerror`?
+
 ## :open_file_folder:   Data Dictionary
 **Variable** |    **Value**    | **Meaning**
 ---|---|---
-*Latitude* | Float number | Latitude of the middle of the parcel
-*Longitude* | Float number | Longitude of the middle of the parcel
+*Latitude* | Float | Latitude of the middle of the parcel
+*Longitude* | Float | Longitude of the middle of the parcel
+*Zip Code* | Integer | Zip code in which the property is located
+*County* | 1) Ventura 2) Los Angeles 3) Orange | County in which the property is located
 *Bedrooms* | Integer ranging from 1-6 | Number of bedrooms in home 
 *Bathrooms* | Float ranging from 0.5-6.5| Number of bathrooms in home including fractional bathrooms
-*Square Feet* | Float number | Calculated total finished living area of the home 
-*Lot Size* | Float number | Area of the lot in square feet
-*Age* | Integer |  This indicate the age of the property in 2017, calculated using the year the principal residence was built 
-*Assessed Value* | Float number | The total tax assessed value of the parcel
-*Tax Amount*| Float number | The total property tax assessed for that assessment year
-*County* | 1) Ventura 2) Los Angeles 3) Orange | County in which the property is located
+*Full Bath* | Interger |  Number of full bathrooms (sink, shower + bathtub, and toilet) present in home
+*Room Count* | Float |  Total number of rooms in the principal residence
+*Total Sqft* | Float | Calculated total finished living area of the home
+*Living Sqft* | Float | Finished living area
+*Lot Sqft* | Float | Area of the lot in square feet
+*Assessed Value* | Float | The total tax assessed value of the parcel
+*Structure Value* | Float | The assessed value of the built structure on the parcel
+*Land Value* | Float | The assessed value of the land area of the parcel
+*Tax Amount*| Float | The total property tax assessed for that assessment year
+*Age* | Integer | This indicate the age of the property in 2017, calculated using the year the principal residence was built 
+*Transaction Month* | Integer | The month in 2017 that the property is sold
+
 
 ## :placard:   Project Plan / Process
 #### :one:   Data Acquisition
@@ -58,35 +76,48 @@ In this project, we will use statistical analysis to analyze the key drivers of 
 
 - Use **zillow** database in the mySQL server
 
-- Read data dictionary and extract meaningful columns 
+- Read data dictionary and extract meaningful columns from table in the **zillow** database
 
 - Write query to join useful tables to gather all data about the houses in the region:  <u>properties_2017, predictions_2017, propertylandusetype </u>
      ```sh
     SELECT 
-    CONCAT(SUBSTRING(longitude, 1, 4),
-                    ',',
-                    SUBSTRING(longitude, 5, 10)) as longitude,
-	CONCAT(SUBSTRING(latitude, 1, 2),
-                    ',',
-                    SUBSTRING(latitude, 3, 10)) as latitude,
-    bedroomcnt AS bedrooms,
-    bathroomcnt AS bathrooms,
-    calculatedfinishedsquarefeet AS square_feet,
-    lotsizesquarefeet AS lot_size,
-    poolcnt AS has_pool,
-    CONCAT ('0',fips) AS fips_code,
-    (2017 - yearbuilt) AS age,
-    taxvaluedollarcnt AS assessed_value,
-    taxamount AS tax_amount
+	    prop.*,
+	    pred.logerror,
+	    pred.transactiondate,
+	    air.airconditioningdesc,
+	    arch.architecturalstyledesc,
+	    build.buildingclassdesc,
+	    heat.heatingorsystemdesc,
+	    landuse.propertylandusedesc,
+	    story.storydesc,
+	    construct.typeconstructiondesc
     FROM
-        properties_2017 AS p
-            JOIN
-        predictions_2017 AS pred USING (parcelid)
-            JOIN
-        propertylandusetype AS ptype USING (propertylandusetypeid)
+    properties_2017 prop
+        INNER JOIN
+	    (SELECT 
+		parcelid, logerror, MAX(transactiondate) AS transactiondate
+	    FROM
+		predictions_2017
+	    GROUP BY parcelid ,  logerror) pred USING (parcelid)
+		LEFT JOIN
+	    airconditioningtype air USING (airconditioningtypeid)
+		LEFT JOIN
+	    architecturalstyletype arch USING (architecturalstyletypeid)
+		LEFT JOIN
+	    buildingclasstype build USING (buildingclasstypeid)
+		LEFT JOIN
+	    heatingorsystemtype heat USING (heatingorsystemtypeid)
+		LEFT JOIN
+	    propertylandusetype landuse USING (propertylandusetypeid)
+		LEFT JOIN
+	    storytype story USING (storytypeid)
+		LEFT JOIN
+	    typeconstructiontype construct USING (typeconstructiontypeid)
     WHERE
-        ptype.propertylandusedesc LIKE '%%Single%%'
-            AND pred.transactiondate LIKE '2017%%';
+	    prop.propertylandusetypeid = 261 AND
+	    prop.latitude IS NOT NULL
+	    AND prop.longitude IS NOT NULL
+	    AND transactiondate <= '2017-12-31';
      ```
 </details>
 
@@ -118,35 +149,113 @@ In this project, we will use statistical analysis to analyze the key drivers of 
 #### :two:   Data Preparation
 
 <details>
+<summary> Missing Value Analysis</summary>
+
+- Visualize the percentage of missing data of each variable
+
+- Create a function that removes columns and rows that have more than a certian percentage of missing values
+
+	```sh
+	    def handle_missing_values(df, prop_required_columns, prop_required_row):
+		    threshold = int(round(prop_required_columns * len(df.index), 0))
+		    df = df.dropna(axis=1, thresh=threshold) #1, or ‘columns’ : Drop columns which contain missing values
+		    threshold = int(round(prop_required_row * len(df.columns), 0))
+		    df = df.dropna(axis=0, thresh=threshold) #0, or ‘index’ : Drop rows which contain missing values
+		    return df
+	``` 
+</details>
+
+<details>
 <summary> Data Cleaning</summary>
 
 - **Missing values:**
-    - Null values for `has_pool` column is replaced with 0
-        ```sh
-        df.has_pool = df.has_pool.replace(np.nan, 0)
-        ``` 
-    - Other null values are dropped
-         ```sh
-        df = df.dropna()
-        ```
-- **Data types: float is converted to `int` datatype**
-     ```sh
-     df['fips_code'] = df['fips_code'].astype(int)
-     df['age'] = df['age'].astype(int)
-     ```
-- **Data mapping**
-    - created new `county` column with county name corresponding to **fips_code**
-    - created new bins `bedrooms_size` and `bathrooms_size` for `bedrooms` and `bathrooms`
-             
-             df['bedrooms_size'] = pd.cut(df.bedrooms, bins = [0,2,4,6],
-                            labels = ['small', 'medium', 'large'])
-             df['bathrooms_size'] = pd.cut(df.bathrooms, bins = [0,2.5,4.5,6.5],
-                            labels = ['small', 'medium', 'large'])
-             
-- **Dummy variables:**
-    - Created dummy variables for categorical feature `county`, `bedrooms_size`, `bathrooms_size`
-    - Concatenated all dummy variables onto original dataframe
+Null values are dropped for entire dataset
+	```sh
+	df = df.dropna()
+	```
 
+- **Rename Columns**
+     ```sh
+     df.rename(columns = {'bathroomcnt':'bathrooms', 'bedroomcnt':'bedrooms',
+                              'calculatedfinishedsquarefeet':'total_sqft', 'finishedsquarefeet12': 'living_sqft',
+			      'fullbathcnt':'full_bath', 'lotsizesquarefeet':'lot_sqft', 'structuretaxvaluedollarcnt': 'structure_value',
+			      'taxvaluedollarcnt':'assessed_value', 'landtaxvaluedollarcnt':'land_value'}, inplace = True)
+     ```
+     
+- **Data Conversion**
+	- Convert `yearbuilt` to `age`
+	 ```sh
+	 df['age'] = 2017 - df['yearbuilt']
+	 ```
+	 
+	 - Convert `taxamount` to `taxrate`
+	 ```sh
+	 df['taxrate'] = df.taxamount/df.assessed_value*100
+	 ```
+	 
+	 - Extract month from `transaction_date`
+	  ```sh
+	 df['transaction_month'] = df['transactiondate'].str.slice(5, 7)
+	 ```
+	 
+	 - Convert `latitude` and `longitude` to correct digit
+	 ```sh
+	 df.latitude = df.latitude/1000000
+ 	 df.longitude = df.longitude/1000000
+	 ```
+- **Join Tables**
+	- Join table **address.csv** which has the correct zip code for properties (derived from geo engineering)
+	```sh
+	geo = pd.read_csv('address.csv')
+    	df = pd.merge(df, geo, on='parcelid', how='inner')
+	```
+	
+	- Join table **logerror_zip.csv** which utilized T-test to decide the significancy of logerrors corresponding to each zip code
+	```sh
+	zip_error = pd.read_csv('logeror_zip.csv')
+   	df = pd.merge(df, zip_error, on='zip_code', how='left')
+	```
+	
+- **Data Mapping**
+    - Created new `county` column with county name corresponding to `fips_code`
+    ```sh
+    df['county'] = df.fips.map({6037: 'Los Angeles', 6059: 'Orange', 6111: 'Ventura'})
+    ```
+    
+    - Create new `zip_bin` column with category name corresponding to each `zip_group`
+    ```sh
+    df['zip_bin'] = df.zip_group.map({1: 'sgfnt high', 2: 'sgfnt low', 3: 'insgfnt high', 4: 'insgfnt low'})
+    ```
+    
+- **Dummy Variables:**
+    - Created dummy variables for categorical feature `county`
+    ```sh
+    dummy_df = pd.get_dummies(df[['county']], dummy_na=False, drop_first=False)
+    ```
+    
+    - Concatenated all `county` dummy variables onto original dataframe
+    ```sh
+    df = pd.concat([df, dummy_df], axis=1)
+    ```
+    
+    - Create dummy variables for categorical feature `zip_group`
+    ```sh
+    zipdummy = pd.get_dummies(df[['zip_bin']], dummy_na=False, drop_first=False)
+    ```
+    
+    - Concatenated all `county` dummy variables onto original dataframe
+    ```sh
+    df = pd.concat([df, zipdummy], axis=1)
+    ```
+    
+- **Data types:**
+`float` is converted to `int` datatype
+     ```sh
+     df['age'] = df['age'].astype(int)
+     df['zip_code'] = df['zip_code'].astype(int)
+     df['transaction_month']=df['transaction_month'].astype(int)
+     ```
+     
 - **Outliers**
     - General rull for handling outliers:
         - Upper bond: Q3 + 1.5 * IQR
@@ -155,21 +264,28 @@ In this project, we will use statistical analysis to analyze the key drivers of 
         **Note:** each feature has minor adjustment based on data distribution
     - Outliers for each feature are dropped
         ```sh
-        df = df[df.bedrooms <= 6]
+        df = df[df.bedrooms <= 7]
         df = df[df.bedrooms >= 1]
 
-        df = df[df.bathrooms <= 6.5]
+        df = df[df.bathrooms <= 7]
         df = df[df.bathrooms >= 0.5]
 
-        df = df[df.square_feet <= 7982]
-        df = df[df.square_feet >= 493]
+        df = df[df.square_feet <= 7500]
+        df = df[df.square_feet >= 500]
 
-        df = df[df.lot_size <= 152597]
-        df = df[df.lot_size >= 787]
+        df = df[df.lot_size <= 50000]
+        df = df[df.lot_size >= 900]
 
-        df = df[df.assessed_value <= 2520956]
-        df = df[df.assessed_value >= 45366]
+        df = df[df.assessed_value <= 1200000]
+        df = df[df.assessed_value >= 45500]
         ```
+- **Drop Columns**
+Unuseful columns are dropped
+	```sh
+	col = ['transactiondate','regionidcity','regionidzip','calculatedbathnbr','assessmentyear','yearbuilt','fips','propertycountylandusecode', 'propertylandusetypeid', 'rawcensustractandblock', 'regionidcounty', 'censustractandblock', 'propertylandusedesc']
+	df.drop(columns = col, inplace = True)
+	```
+	
 - Create function `prep_zillow` to clean and prepare data with steps above
 
 - Import [prepare.py](prepare.py)
@@ -196,6 +312,22 @@ In this project, we will use statistical analysis to analyze the key drivers of 
      ```
 </details>
 
+<details>
+<summary> Data Scaling</summary>
+
+- Scaling numerical features using `MinMaxScaler()`
+
+- Create a function that removes columns and rows that have more than a certian percentage of missing values
+
+	```sh
+	    def handle_missing_values(df, prop_required_columns, prop_required_row):
+		    threshold = int(round(prop_required_columns * len(df.index), 0))
+		    df = df.dropna(axis=1, thresh=threshold) #1, or ‘columns’ : Drop columns which contain missing values
+		    threshold = int(round(prop_required_row * len(df.columns), 0))
+		    df = df.dropna(axis=0, thresh=threshold) #0, or ‘index’ : Drop rows which contain missing values
+		    return df
+	``` 
+</details>
 #### :three:   Exploratory Analysis
 - Ask questions to find what are the key features that are associated with property assessed value
 
