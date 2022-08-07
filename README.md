@@ -47,16 +47,24 @@ logerror = log(Zestimate) − log(SalePrice)
 ## :open_file_folder:   Data Dictionary
 **Variable** |    **Value**    | **Meaning**
 ---|---|---
-*Latitude* | Float number | Latitude of the middle of the parcel
-*Longitude* | Float number | Longitude of the middle of the parcel
+*Latitude* | Float | Latitude of the middle of the parcel
+*Longitude* | Float | Longitude of the middle of the parcel
+*Zip Code* | Integer | Zip code in which the property is located
+*County* | 1) Ventura 2) Los Angeles 3) Orange | County in which the property is located
 *Bedrooms* | Integer ranging from 1-6 | Number of bedrooms in home 
 *Bathrooms* | Float ranging from 0.5-6.5| Number of bathrooms in home including fractional bathrooms
-*Square Feet* | Float number | Calculated total finished living area of the home 
-*Lot Size* | Float number | Area of the lot in square feet
-*Age* | Integer |  This indicate the age of the property in 2017, calculated using the year the principal residence was built 
-*Assessed Value* | Float number | The total tax assessed value of the parcel
-*Tax Amount*| Float number | The total property tax assessed for that assessment year
-*County* | 1) Ventura 2) Los Angeles 3) Orange | County in which the property is located
+*Full Bath* | Interger |  Number of full bathrooms (sink, shower + bathtub, and toilet) present in home
+*Room Count* | Float |  Total number of rooms in the principal residence
+*Total Sqft* | Float | Calculated total finished living area of the home
+*Living Sqft* | Float | Finished living area
+*Lot Sqft* | Float | Area of the lot in square feet
+*Assessed Value* | Float | The total tax assessed value of the parcel
+*Structure Value* | Float | The assessed value of the built structure on the parcel
+*Land Value* | Float | The assessed value of the land area of the parcel
+*Tax Amount*| Float | The total property tax assessed for that assessment year
+*Age* | Integer | This indicate the age of the property in 2017, calculated using the year the principal residence was built 
+*Transaction Month* | Integer | The month in 2017 that the property is sold
+
 
 ## :placard:   Project Plan / Process
 #### :one:   Data Acquisition
@@ -68,35 +76,48 @@ logerror = log(Zestimate) − log(SalePrice)
 
 - Use **zillow** database in the mySQL server
 
-- Read data dictionary and extract meaningful columns 
+- Read data dictionary and extract meaningful columns from table in the **zillow** database
 
 - Write query to join useful tables to gather all data about the houses in the region:  <u>properties_2017, predictions_2017, propertylandusetype </u>
      ```sh
     SELECT 
-    CONCAT(SUBSTRING(longitude, 1, 4),
-                    ',',
-                    SUBSTRING(longitude, 5, 10)) as longitude,
-	CONCAT(SUBSTRING(latitude, 1, 2),
-                    ',',
-                    SUBSTRING(latitude, 3, 10)) as latitude,
-    bedroomcnt AS bedrooms,
-    bathroomcnt AS bathrooms,
-    calculatedfinishedsquarefeet AS square_feet,
-    lotsizesquarefeet AS lot_size,
-    poolcnt AS has_pool,
-    CONCAT ('0',fips) AS fips_code,
-    (2017 - yearbuilt) AS age,
-    taxvaluedollarcnt AS assessed_value,
-    taxamount AS tax_amount
+	    prop.*,
+	    pred.logerror,
+	    pred.transactiondate,
+	    air.airconditioningdesc,
+	    arch.architecturalstyledesc,
+	    build.buildingclassdesc,
+	    heat.heatingorsystemdesc,
+	    landuse.propertylandusedesc,
+	    story.storydesc,
+	    construct.typeconstructiondesc
     FROM
-        properties_2017 AS p
-            JOIN
-        predictions_2017 AS pred USING (parcelid)
-            JOIN
-        propertylandusetype AS ptype USING (propertylandusetypeid)
+    properties_2017 prop
+        INNER JOIN
+	    (SELECT 
+		parcelid, logerror, MAX(transactiondate) AS transactiondate
+	    FROM
+		predictions_2017
+	    GROUP BY parcelid ,  logerror) pred USING (parcelid)
+		LEFT JOIN
+	    airconditioningtype air USING (airconditioningtypeid)
+		LEFT JOIN
+	    architecturalstyletype arch USING (architecturalstyletypeid)
+		LEFT JOIN
+	    buildingclasstype build USING (buildingclasstypeid)
+		LEFT JOIN
+	    heatingorsystemtype heat USING (heatingorsystemtypeid)
+		LEFT JOIN
+	    propertylandusetype landuse USING (propertylandusetypeid)
+		LEFT JOIN
+	    storytype story USING (storytypeid)
+		LEFT JOIN
+	    typeconstructiontype construct USING (typeconstructiontypeid)
     WHERE
-        ptype.propertylandusedesc LIKE '%%Single%%'
-            AND pred.transactiondate LIKE '2017%%';
+	    prop.propertylandusetypeid = 261 AND
+	    prop.latitude IS NOT NULL
+	    AND prop.longitude IS NOT NULL
+	    AND transactiondate <= '2017-12-31';
      ```
 </details>
 
