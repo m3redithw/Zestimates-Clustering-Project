@@ -22,6 +22,7 @@ In this project, we will use statistical analysis to analyze the key drivers of 
 ```
 logerror = log(Zestimate) − log(SalePrice)
 ```
+
 ## :house:   Project Goals
 ▪️ Find the key drivers of log error for **single family properties** in 2017.
 
@@ -213,7 +214,7 @@ Null values are dropped for entire dataset
 	
 	- Join table **logerror_zip.csv** which utilized T-test to decide the significancy of logerrors corresponding to each zip code
 	```sh
-	zip_error = pd.read_csv('logeror_zip.csv')
+	zip_error = pd.read_csv('logerror_zip.csv')
 	df = pd.merge(df, zip_error, on='zip_code', how='left')
 	```
 	
@@ -353,14 +354,19 @@ Unuseful columns are dropped
 
 - Explore each feature's correlation with assessed value
 
-- Using visualizations to better understand the relationship between features
+- Use visualizations to better understand the relationship between features
 
-#### :four:    Statistical Testing & Modeling
+- Use centroid-based clustering method to find patterns in data, and use the meaningful clusters to group data
+
+#### :four:    Statistical Testing & Modeling	
 - Conduct T-Test for categorical variable vs. numerical variable
 
+- Conduct Pearson R for numerical variable vs. numerical variable
+	
 - Conduct Chi^2 Test for categorical variable vs. categorical variable
 
 - Conclude hypothesis and address the initial questions
+	
 #### :five:    Modeling Evaluation
 - Create multiple regression model and use Recursive Feature Elimination (RFE) to select features
 
@@ -382,7 +388,7 @@ Unuseful columns are dropped
 
 ## :repeat:   Steps to Reproduce
 - [x] You will need an **env.py** file that contains the hostname, username and password of the mySQL database that contains the telco table. Store that env file locally in the repository.
-- [x] Clone my repo (including the **imports.py**, **acquire.py**, **prepare.py**) 
+- [x] Clone my repo (including the **imports.py**, **acquire.py**, **prepare.py**, **address.csv**, **logerror_zip.csv**) 
 - [x] Confirm **.gitignore** is hiding your env.py file
 - [x] Libraries used are pandas, matplotlib, seaborn, plotly, sklearn, scipy
 - [x] Follow instructions in [zillow_eda](zillow_eda.ipynb) workbook and README file
