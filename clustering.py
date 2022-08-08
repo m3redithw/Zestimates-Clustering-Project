@@ -100,7 +100,7 @@ def value_clusters(train, validate, test):
     
     return train, validate, test
     
-def clusters_dummy(train, validate_test):
+def clusters_dummy(train, validate, test):
     cols = ['location_clusters', 'age_clusters', 'area_clusters', 'size_clusters', 'value_clusters']
     train_dummy = pd.get_dummies(train[cols], dummy_na=False, drop_first=False)
     train = pd.concat([train, train_dummy], axis=1)
