@@ -30,7 +30,7 @@ import env
 import acquire
 import prepare
 
-def location_clusers(train, validate, test):
+def location_clusters(train, validate, test):
     cols = ['latitude', 'longitude', 'zip_bin_insgfnt high', 'zip_bin_insgfnt low',
        'zip_bin_sgfnt high']
     kmeans = KMeans(n_clusters=4)
