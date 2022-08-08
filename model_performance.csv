@@ -1,0 +1,9 @@
+﻿model,data,score
+feature b multiple rfe k=9,train,0.16164
+feature b multiple rfe k=9,validate,0.15734
+feature b polynomial degree 2 ,train,0.16152
+feature b polynomial degree 2 ,validate,0.15738
+feature c multiple rfe k=6,train,0.16165
+feature c multiple rfe k=6,validate,0.15739
+baseline,train,0.16262
+baseline,validate,0.15807
