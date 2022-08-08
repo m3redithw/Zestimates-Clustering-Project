@@ -35,13 +35,13 @@ logerror = log(Zestimate) − log(SalePrice)
 ▪️ Make recommendations on what works or doesn't work in prediction log error.
 
 ## :memo:   Initial Questions
-▪️ Is any of the location features associated with `logerror`? Is `logerror` significantly different across different counties? What about latitude, longtitude? What about zip code?
+▪️ Are any of the location features associated with `logerror`? Is `logerror` significantly different across different counties? What about latitude, longtitude? What about zip code?
 
-▪️ Is the `age ` of the house correlated with `logerror`?
+▪️ Are any of the area (in square feet) features, including `total_sqft`, `lot_sqft`, `living_sqft`, of the property associated with `logerror`?
 
-▪️ Is any of the area (in square feet) features, including `total_sqft`, `lot_sqft`, `living_sqft`, of the property associated with `logerror`?
+▪️ Are any of the size features, including `bedrroms`, `bathrooms`, `full_bath`, `roomcnt`, of the property associated with `logerror`?
 
-▪️ Is any of the size features, including `bedrroms`, `bathrooms`, `full_bath`, `roomcnt`, of the property associated with `logerror`?
+▪️ Is the `age` of the house correlated with `logerror`?
 
 ▪️ Is `transaction_month` correlated with `logerror`?
 
@@ -52,8 +52,8 @@ logerror = log(Zestimate) − log(SalePrice)
 *Longitude* | Float | Longitude of the middle of the parcel
 *Zip Code* | Integer | Zip code in which the property is located
 *County* | 1) Ventura 2) Los Angeles 3) Orange | County in which the property is located
-*Bedrooms* | Integer ranging from 1-6 | Number of bedrooms in home 
-*Bathrooms* | Float ranging from 0.5-6.5| Number of bathrooms in home including fractional bathrooms
+*Bedrooms* | Integer | Number of bedrooms in home 
+*Bathrooms* | Float | Number of bathrooms in home including fractional bathrooms
 *Full Bath* | Interger |  Number of full bathrooms (sink, shower + bathtub, and toilet) present in home
 *Room Count* | Float |  Total number of rooms in the principal residence
 *Total Sqft* | Float | Calculated total finished living area of the home
@@ -62,7 +62,7 @@ logerror = log(Zestimate) − log(SalePrice)
 *Assessed Value* | Float | The total tax assessed value of the parcel
 *Structure Value* | Float | The assessed value of the built structure on the parcel
 *Land Value* | Float | The assessed value of the land area of the parcel
-*Tax Amount*| Float | The total property tax assessed for that assessment year
+*Tax Amount* | Float | The total property tax assessed for that assessment year
 *Age* | Integer | This indicate the age of the property in 2017, calculated using the year the principal residence was built 
 *Transaction Month* | Integer | The month in 2017 that the property is sold
 
