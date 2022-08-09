@@ -18,7 +18,7 @@ by **Meredith Wang**
 
 **Zillow's ZestimateⓇ** is an estimate of value using a proprietary formula created by the online real estate database company. Zestimates cover more than 100 million homes across the United States. A Zestimate is calculated from physical attributes, tax records, and user submitted data.
 
-In this project, we will use statistical analysis to analyze the key drivers of logerror, which is defined as logerror (the differnece between the predicted log error and the actual log error). We will incorporate clustering methodologies, and develop a ML regression model to predict the log error, and provide recommendations on making more accurate prediction on log error which further leads to better prediction on home value predictions.
+In this project, we will use statistical analysis to analyze the key drivers of logerror, which is defined as the differnece between the predicted log error and the actual log error. We will incorporate clustering methodologies, and develop a ML regression model to predict the log error, and provide recommendations on making more accurate prediction on log error which further leads to better prediction on home value predictions.
 ```
 logerror = log(Zestimate) − log(SalePrice)
 ```
