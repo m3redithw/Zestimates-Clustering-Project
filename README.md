@@ -388,7 +388,7 @@ Unuseful columns are dropped
 
 ## :repeat:   Steps to Reproduce
 - [x] You will need an **env.py** file that contains the hostname, username and password of the mySQL database that contains the telco table. Store that env file locally in the repository.
-- [x] Clone my repo (including the **imports.py**, **acquire.py**, **prepare.py**, **address.csv**, **logerror_zip.csv**) 
+- [x] Clone my repo (including the **imports.py**, **acquire.py**, **prepare.py**, **clustering.py**, **modeling.py**, **address.csv**, **logerror_zip.csv**) 
 - [x] Confirm **.gitignore** is hiding your env.py file
 - [x] Libraries used are pandas, matplotlib, seaborn, plotly, sklearn, scipy
 - [x] Follow instructions in [zillow_eda](zillow_eda.ipynb) workbook and README file
@@ -396,36 +396,24 @@ Unuseful columns are dropped
 
 ## :key:    Key Findings
 
-▪️ The top 5 drivers of property assessed value are:
+▪️ Logerror is dependent on location features. <span style="color: blue"> Location clusters </span> are relevant and useful for estimating logerror.
 
- - square feet
- 
- - size of bedrooms and bathrooms
- 
- - lot size
- 
- - county
- 
- - has pool or not
- 
-▪️ **Square feet** has a strong positive relationship with property tax assessed value
+▪️ Area features have <span style="color: blue"> weak </span> correlation with logerror. Area clusters seem relevant judging from the bra graph, but the ANOVA test concludes there's no significant difference between clusters.
 
-▪️ Property tax assessed value is dependent on the number of **bedrooms** and **bathrooms**.
+▪️ Size features have <span style="color: blue"> weak </span> correlation with logerror. We can see the relationship from visualizing clusters but the ANOVA test concludes there's no significant difference between clusters.
 
-▪️ Mean of property tax assessed value of Los Angeles, Orange, and Ventura County are not all equal.
-- Los Angeles county has the lowest property tax assessed value on average
-- Orange county has the highest property tax assessed value on average
+▪️ Value features have <span style="color: blue"> weak </span> correlation with logerror. Although the visualization tells us there's a negative correlation between them, the ANOVA test concludes there's no significant difference between clusters.
 
-▪️ Properties with **pool** has a higher property tax assessed value on average than properties without pool.
-
-▪️ The age of the property (2017 - year_built) has a negative medium correlation with property tax assessed value.
-
-▪️ The meachine learning model: polynomial features degree 3 is expected to predict housing prices within variance of **$202015** on average on future unseen data
+(Each feature is a driver of property tax assessed value, supported by visualization and statistical testing. For lot size and age analysis please reference [zillow_eda](zillow_eda.ipynb))
 
 ## :high_brightness:    Recommendations
-▪️ To better understand the relationship between features and the target vairable, we need more information on the properties' **location**
+▪️ Impute null values instead of dropping them.
 
-▪️ To improve model's accuracy, we need more accurate latitude and longtitude data to pinpoint the property.
+▪️ Handle outliers differently, or save the outliers so that the final model will have better prediction on future onseen data.
+
+▪️ Experiment with more feature combinations and different algorithms.
+
+▪️ To make better predictions, we need to gather more accurate **geographical data**. In this dataset we're given, the `regionidcity`, `regionidzip` etc. are not accurate.
 
 
 ## 🔜  Next Steps
@@ -433,4 +421,4 @@ Unuseful columns are dropped
 
 ▪️ Develop machine learning models with higher accuracy (lower RMSE) with these additonal data and make better predictions.
 
-▪️ Collect data on previous years to analyze the general trend of each area, and determine what features drive the housing prices the most.
+▪️ Collect data on previous years (e.g. historical time to close data) to analyze the general trend of each area, and determine what features drive the logerror the most.
