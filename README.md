@@ -65,6 +65,10 @@ logerror = log(Zestimate) − log(SalePrice)
 *Tax Amount* | Float | The total property tax assessed for that assessment year
 *Age* | Integer | This indicate the age of the property in 2017, calculated using the year the principal residence was built 
 *Transaction Month* | Integer | The month in 2017 that the property is sold
+Note: Full dictionary please reference [zillow_data_dictionary](zillow_data_dictionary.xlsx)
+
+## :jigsaw:   Data Overview
+![data_overview](https://user-images.githubusercontent.com/105242871/183556966-ea49f052-b409-415d-83d9-7c4aba868b03.jpg)
 
 
 ## :placard:   Project Plan / Process
