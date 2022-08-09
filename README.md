@@ -411,6 +411,7 @@ Unuseful columns are dropped
 (Each feature is a driver of property tax assessed value, supported by visualization and statistical testing. For lot size and age analysis please reference [zillow_eda](zillow_eda.ipynb))
 
 <img width="1167" alt="final_model" src="https://user-images.githubusercontent.com/105242871/183556801-ed23751f-a7f1-44a9-a0b3-2d3c2b616b4d.png">
+
 ## :high_brightness:    Recommendations
 ▪️ Impute null values instead of dropping them.
 
