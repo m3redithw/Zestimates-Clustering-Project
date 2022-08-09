@@ -65,6 +65,10 @@ logerror = log(Zestimate) − log(SalePrice)
 *Tax Amount* | Float | The total property tax assessed for that assessment year
 *Age* | Integer | This indicate the age of the property in 2017, calculated using the year the principal residence was built 
 *Transaction Month* | Integer | The month in 2017 that the property is sold
+Note: Full dictionary please reference [zillow_data_dictionary](zillow_data_dictionary.xlsx)
+
+## :jigsaw:   Data Overview
+![data_overview](https://user-images.githubusercontent.com/105242871/183556966-ea49f052-b409-415d-83d9-7c4aba868b03.jpg)
 
 
 ## :placard:   Project Plan / Process
@@ -406,6 +410,7 @@ Unuseful columns are dropped
 
 (Each feature is a driver of property tax assessed value, supported by visualization and statistical testing. For lot size and age analysis please reference [zillow_eda](zillow_eda.ipynb))
 
+<img width="1167" alt="final_model" src="https://user-images.githubusercontent.com/105242871/183556801-ed23751f-a7f1-44a9-a0b3-2d3c2b616b4d.png">
 ## :high_brightness:    Recommendations
 ▪️ Impute null values instead of dropping them.
 
