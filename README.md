@@ -361,6 +361,8 @@ Unuseful columns are dropped
 - Use visualizations to better understand the relationship between features
 
 - Use centroid-based clustering method to find patterns in data, and use the meaningful clusters to group data
+![plotly 3d scatter](https://user-images.githubusercontent.com/105242871/183792869-a1b6cbf0-009e-413c-b326-77a6f8d2f3ee.GIF)
+
 
 #### :four:    Statistical Testing & Modeling	
 - Conduct T-Test for categorical variable vs. numerical variable
