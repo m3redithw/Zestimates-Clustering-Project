@@ -93,7 +93,7 @@ def prep_zillow(df):
     df = df[df.taxrate < 10]
 
     # Join zip groups by logerror
-    zip_error = pd.read_csv('logeror_zip.csv')
+    zip_error = pd.read_csv('logerror_zip.csv')
     df = pd.merge(df, zip_error, on='zip_code', how='left')
     df['zip_bin'] = df.zip_group.map({1: 'sgfnt high', 2: 'sgfnt low', 3: 'insgfnt high', 4: 'insgfnt low'})
     zipdummy = pd.get_dummies(df[['zip_bin']], dummy_na=False, drop_first=False)
@@ -116,6 +116,7 @@ def split(df):
     
     return train, validate, test
 
+# This function scales the data using MinMaxScaler(), then splits the data into train, validate, test.
 def split_scale(df):
     # Copy a new dataframe to perform feature engineering
     scaled_df = df.copy()
@@ -129,7 +130,7 @@ def split_scale(df):
     # Columns to scale
     cols = ['bathrooms', 'bedrooms', 'total_sqft', 'living_sqft', 'full_bath',
        'latitude', 'longitude', 'lot_sqft', 'roomcnt',
-       'structure_value', 'assessed_value', 'land_value', 'taxamount', 'age']
+       'structure_value', 'assessed_value', 'land_value', 'taxamount', 'age', 'transaction_month']
 
     # Fit numerical features to scaler
     scaler.fit(train[cols])
