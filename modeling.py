@@ -41,7 +41,7 @@ import clustering
 import colorama
 from colorama import Fore
 
-
+# This function creates 3 dataframes for model's predictions, makes baseline prediction for train, validate, test.
 def baseline_prediction(train, validate, test):
     # Initialized dataframe to hold preditions from different models
     train_predictions = pd.DataFrame({
@@ -61,6 +61,8 @@ def baseline_prediction(train, validate, test):
     print(Fore.BLUE+ "\nRoot mean of squared error of baseline prediction is: ", "{:10.3f}".format(rmse))
     return train_predictions, validate_predictions, test_predictions
 
+# This function uses the first feature combination to make prediction using multiple regression & polynomial features.
+# It will then add the predictions to the dataframes that we initiated.
 def feature_a_models(train, validate, test, train_predictions, validate_predictions, test_predictions):
     cols = ['age_clusters_0', 'age_clusters_1', 'age_clusters_2','location_clusters_0',
             'location_clusters_1',  'location_clusters_2', 'location_clusters_3',
@@ -88,7 +90,7 @@ def feature_a_models(train, validate, test, train_predictions, validate_predicti
     X_test_rfe = rfe.transform(X_test)
     lm.fit(X_train_rfe, y_train)
 
-    # Make predictions and add that to the train_predictions dataframe
+    # Make predictions and add that to the predictions dataframe
     train_predictions['feature a multiple rfe k=15'] = lm.predict(X_train_rfe)
     validate_predictions['feature a multiple rfe k=15'] = lm.predict(X_validate_rfe)
     test_predictions['feature a multiple rfe k=15'] = lm.predict(X_test_rfe)
@@ -107,11 +109,14 @@ def feature_a_models(train, validate, test, train_predictions, validate_predicti
     X_validate_poly = poly.transform(X_validate)
     X_test_poly = poly.transform(X_test)
 
+    # Make predictions and add that to the predictions dataframe
     train_predictions['feature a polynomial degree 2 only interaction'] = lm.predict(X_train_poly)
     validate_predictions['feature a polynomial degree 2 only interaction'] = lm.predict(X_validate_poly)
     test_predictions['feature a polynomial degree 2 only interaction'] = lm.predict(X_test_poly)
     return train_predictions, validate_predictions, test_predictions
 
+# This function uses the second feature combination to make prediction using multiple regression & polynomial features.
+# It will then add the predictions to the dataframes that we initiated.
 def feature_b_models(train, validate, test, train_predictions, validate_predictions, test_predictions):
     cols = ['living_sqft', 'structure_value', 'assessed_value', 'land_value',
        'zip_bin_insgfnt high', 'zip_bin_sgfnt high', 'location_clusters_0',
@@ -139,7 +144,7 @@ def feature_b_models(train, validate, test, train_predictions, validate_predicti
     X_test_rfe = rfe.transform(X_test)
     lm.fit(X_train_rfe, y_train)
 
-    # Make predictions and add that to the train_predictions dataframe
+    # Make predictions and add that to the predictions dataframe
     train_predictions['feature b multiple rfe k=9'] = lm.predict(X_train_rfe)
     validate_predictions['feature b multiple rfe k=9'] = lm.predict(X_validate_rfe)
     test_predictions['feature b multiple rfe k=9'] = lm.predict(X_test_rfe)
@@ -157,13 +162,15 @@ def feature_b_models(train, validate, test, train_predictions, validate_predicti
 
     X_validate_poly = poly.transform(X_validate)
     X_test_poly = poly.transform(X_test)
-
+    
+    # Make predictions and add that to the predictions dataframe
     train_predictions['feature b polynomial degree 2'] = lm.predict(X_train_poly)
     validate_predictions['feature b polynomial degree 2'] = lm.predict(X_validate_poly)
     test_predictions['feature b polynomial degree 2'] = lm.predict(X_test_poly)
     return train_predictions, validate_predictions, test_predictions
 
-
+# This function uses the thrid feature combination to make prediction using multiple regression & polynomial features.
+# It will then add the predictions to the dataframes that we initiated.
 def feature_c_models(train, validate, test, train_predictions, validate_predictions, test_predictions):
     cols = ['living_sqft', 'structure_value', 'assessed_value', 'land_value',
        'county_Los Angeles', 'county_Orange', 'county_Ventura',
@@ -212,6 +219,7 @@ def feature_c_models(train, validate, test, train_predictions, validate_predicti
     X_validate_poly = poly.transform(X_validate)
     X_test_poly = poly.transform(X_test)
 
+    # Make predictions and add that to the predictions dataframe
     train_predictions['feature c polynomial degree 2'] = lm.predict(X_train_poly)
     validate_predictions['feature c polynomial degree 2'] = lm.predict(X_validate_poly)
     test_predictions['feature c polynomial degree 2'] = lm.predict(X_test_poly)
