@@ -30,6 +30,8 @@ import env
 import acquire
 import prepare
 
+# This function creates location clusters (the most meaningful one among all the combination experimented),
+# and adds onto each dataframe.
 def location_clusters(train, validate, test):
     cols = ['latitude', 'longitude', 'zip_bin_insgfnt high', 'zip_bin_insgfnt low',
        'zip_bin_sgfnt high']
@@ -43,6 +45,8 @@ def location_clusters(train, validate, test):
     test.location_clusters  = test.location_clusters.astype('str')
     return train, validate, test
 
+# This function creates age clusters (the most meaningful one among all the combination experimented),
+# and adds onto each dataframe.
 def age_clusters(train, validate, test):
     cols = ['age']
     kmeans = KMeans(n_clusters=3)
@@ -57,6 +61,8 @@ def age_clusters(train, validate, test):
     test.age_clusters  = test.age_clusters.astype('str')
     return train, validate, test
 
+# This function creates area clusters (the most meaningful one among all the combination experimented),
+# and adds onto each dataframe.
 def area_clusters(train, validate, test):
     cols =['total_sqft', 'lot_sqft', 'living_sqft']
     kmeans = KMeans(n_clusters=3)
@@ -71,6 +77,8 @@ def area_clusters(train, validate, test):
     test.area_clusters  = test.area_clusters.astype('str')
     return train, validate, test
 
+# This function creates size clusters (the most meaningful one among all the combination experimented),
+# and adds onto each dataframe.
 def size_clusters(train, validate, test):
     cols = ['bedrooms', 'bathrooms', 'full_bath']
     kmeans = KMeans(n_clusters=3)
@@ -86,6 +94,8 @@ def size_clusters(train, validate, test):
     
     return train, validate, test
 
+# This function creates value clusters (the most meaningful one among all the combination experimented),
+# and adds onto each dataframe.
 def value_clusters(train, validate, test):
     # adding value clusters to dataframe - not significant
     cols = ['structure_value', 'assessed_value', 'land_value','taxamount']
@@ -99,7 +109,9 @@ def value_clusters(train, validate, test):
     test.value_clusters  = test.value_clusters.astype('str')
     
     return train, validate, test
-    
+
+# This function creates dummy variables for the clusters that we created.
+# It will return the datasets with dummy variables concatenated on them.
 def clusters_dummy(train, validate, test):
     cols = ['location_clusters', 'age_clusters', 'area_clusters', 'size_clusters', 'value_clusters']
     train_dummy = pd.get_dummies(train[cols], dummy_na=False, drop_first=False)
