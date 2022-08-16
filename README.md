@@ -396,8 +396,11 @@ Unuseful columns are dropped
 - [x] You will need an **env.py** file that contains the hostname, username and password of the mySQL database that contains the telco table. Store that env file locally in the repository.
 - [x] Clone my repo (including the **imports.py**, **acquire.py**, **prepare.py**, **clustering.py**, **modeling.py**, **address.csv**, **logerror_zip.csv**) 
 - [x] Confirm **.gitignore** is hiding your env.py file
-- [x] Libraries used are pandas, matplotlib, seaborn, plotly, sklearn, scipy
-- [x] Follow instructions in [zillow_eda](zillow_eda.ipynb) workbook and README file
+- [x] Ensure you have imported `*` from  **imports.py** before running anything else (Libraries used are pandas, matplotlib, seaborn, plotly, sklearn, scipy which are all included in the imports file)
+- [x] Follow instructions in [eda](eda.ipynb) workbook on steps for data exploration
+- [x] Reference [feature_engineering](feature_engineering.ipynb) for steps took to select clusters
+- [x] Reference in [modeling](modeling.ipynb) for experimentations that drove to the final models
+- [x] Follow instructions in [final_report](final_report.ipynb) and README file
 - [x] Good to run final report :smile_cat:
 
 ## :key:    Key Findings
